@@ -1,5 +1,3 @@
-import java.util.*
-
 fun main() {
     fun isNumber(input: CharSequence, part2: Boolean): Int? {
         if (input.isEmpty())
