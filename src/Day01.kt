@@ -1,14 +1,18 @@
 fun main() {
-    fun isNumber(input: CharSequence, part2: Boolean): Int? {
+    fun isNumberPart1(input: CharSequence): Int? {
         if (input.isEmpty())
             assert(false)
 
-        val digit = input.first().digitToIntOrNull()
-        if (digit != null)
-            return digit
+        return input.first().digitToIntOrNull()
+    }
 
-        if (!part2)
-            return null
+    fun isNumberPart2(input: CharSequence): Int? {
+        if (input.isEmpty())
+            assert(false)
+
+        val digit = isNumberPart1(input);
+        if (digit != null)
+            return digit;
 
         if (input.startsWith("one")) return 1
         if (input.startsWith("two")) return 2
@@ -23,7 +27,7 @@ fun main() {
         return null
     }
 
-    fun run(input: List<String>, part2: Boolean): Int {
+    fun run(input: List<String>, isNumber: (CharSequence) -> Int?): Int {
         var res = 0
         for (line in input) {
             var num = 0
@@ -36,7 +40,7 @@ fun main() {
 
             while (!leftSeen || !rightSeen) {
                 if (!leftSeen) {
-                    val digit = isNumber(line.subSequence(leftIdx, line.length), part2)
+                    val digit = isNumber(line.subSequence(leftIdx, line.length))
                     if (digit != null) {
                         leftSeen = true
                         num += 10 * digit
@@ -44,7 +48,7 @@ fun main() {
                 }
 
                 if (!rightSeen) {
-                    val digit = isNumber(line.subSequence(rightIdx, line.length), part2)
+                    val digit = isNumber(line.subSequence(rightIdx, line.length))
                     if (digit != null) {
                         rightSeen = true
                         num += digit
@@ -61,8 +65,8 @@ fun main() {
         return res
     }
 
-    fun part1(input: List<String>): Int = run(input, false)
-    fun part2(input: List<String>): Int  = run(input, true)
+    fun part1(input: List<String>): Int = run(input, ::isNumberPart1)
+    fun part2(input: List<String>): Int = run(input, ::isNumberPart2)
 
     // test if implementation meets criteria from the description, like:
     val testInput1 = readInput("Day01_test1")
