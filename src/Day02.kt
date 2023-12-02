@@ -3,9 +3,7 @@ import kotlin.math.max
 fun main() {
     data class Game(val id: Int, var draws: List<Triple<Int, Int, Int>>)
 
-    val RED = 12
-    val GREEN = 13
-    val BLUE = 14
+    val (RED, GREEN, BLUE) = Triple(12, 13, 14)
 
     fun parseGame(game: String): Game {
         val id = game.substringAfter("Game ").substringBefore(':').toInt()
