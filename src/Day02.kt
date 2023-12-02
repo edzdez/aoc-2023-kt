@@ -12,9 +12,7 @@ fun main() {
 
         val draws = game.substringAfter(": ").split("; ").map {
             val drawStr = it.split(", ").toList()
-            var red = 0
-            var green = 0
-            var blue = 0
+            var (red, green, blue) = Triple(0, 0, 0)
             for (color in drawStr) {
                 if (color.endsWith("red")) {
                     red += color.substringBefore(' ').toInt()
@@ -31,42 +29,16 @@ fun main() {
         return Game(id, draws)
     }
 
-    fun part1(input: List<String>): Int {
-        val games = input.map { parseGame(it) }
-
-        var ans = 0
-        for (game in games) {
-            var flag = true
-            for (set in game.draws) {
-                if (set.first > RED || set.second > GREEN || set.third > BLUE)
-                    flag = false
-            }
-            if (flag)
-                ans += game.id
+    fun part1(input: List<String>): Int = input.map(::parseGame).filter { game ->
+        game.draws.all {
+            it.first <= RED && it.second <= GREEN && it.third <= BLUE
         }
+    }.fold(0) { acc, game -> acc + game.id }
 
-        return ans
-    }
-
-    fun part2(input: List<String>): Int {
-        val games = input.map { parseGame(it) }
-
-        var ans = 0
-        for (game in games) {
-            var red = 0
-            var green = 0
-            var blue = 0
-            for (set in game.draws) {
-                red = max(red, set.first)
-                green = max(green, set.second)
-                blue = max(blue, set.third)
-            }
-
-            val power = red * green * blue
-            ans += power
-        }
-
-        return ans
+    fun part2(input: List<String>): Int = input.map(::parseGame).fold(0) { res, game ->
+        res + game.draws.fold(Triple(0, 0, 0)) { acc, set ->
+            Triple(max(acc.first, set.first), max(acc.second, set.second), max(acc.third, set.third))
+        }.toList().reduce(Int::times)
     }
 
     val testInput = readInput("Day02_test")
