@@ -1,7 +1,7 @@
 import kotlin.math.max
 
 fun main() {
-    data class Game(val id: Int, var sets: List<Triple<Int, Int, Int>>)
+    data class Game(val id: Int, val sets: List<Triple<Int, Int, Int>>)
 
     val (RED, GREEN, BLUE) = Triple(12, 13, 14)
 
