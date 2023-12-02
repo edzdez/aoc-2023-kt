@@ -1,17 +1,17 @@
 import kotlin.math.max
 
 fun main() {
-    data class Game(val id: Int, var draws: List<Triple<Int, Int, Int>>)
+    data class Game(val id: Int, var sets: List<Triple<Int, Int, Int>>)
 
     val (RED, GREEN, BLUE) = Triple(12, 13, 14)
 
     fun parseGame(game: String): Game {
         val id = game.substringAfter("Game ").substringBefore(':').toInt()
 
-        val draws = game.substringAfter(": ").split("; ").map {
-            val drawStr = it.split(", ").toList()
+        val sets = game.substringAfter(": ").split("; ").map {
+            val set = it.split(", ").toList()
             var (red, green, blue) = Triple(0, 0, 0)
-            for (color in drawStr) {
+            for (color in set) {
                 if (color.endsWith("red")) {
                     red += color.substringBefore(' ').toInt()
                 } else if (color.endsWith("green")) {
@@ -24,17 +24,17 @@ fun main() {
             Triple(red, green, blue)
         }.toList()
 
-        return Game(id, draws)
+        return Game(id, sets)
     }
 
     fun part1(input: List<String>): Int = input.map(::parseGame).filter { game ->
-        game.draws.all {
+        game.sets.all {
             it.first <= RED && it.second <= GREEN && it.third <= BLUE
         }
     }.fold(0) { acc, game -> acc + game.id }
 
     fun part2(input: List<String>): Int = input.map(::parseGame).fold(0) { res, game ->
-        res + game.draws.fold(Triple(0, 0, 0)) { acc, set ->
+        res + game.sets.fold(Triple(0, 0, 0)) { acc, set ->
             Triple(max(acc.first, set.first), max(acc.second, set.second), max(acc.third, set.third))
         }.toList().reduce(Int::times)
     }
