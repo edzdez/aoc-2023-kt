@@ -2,67 +2,35 @@ import kotlin.math.max
 import kotlin.math.min
 
 fun main() {
+    val numRegex = Regex("\\d+")
     fun isSymbol(c: Char): Boolean {
         return c != '.' && !c.isLetterOrDigit()
     }
 
-    fun part1(input: List<String>): Int {
-        val numRegex = Regex("\\d+")
-
-        var res = 0
-        for (row in input.indices) {
-            for (match in numRegex.findAll(input[row])) {
-                val (start, end) = Pair(match.range.first, match.range.last)
-                val num = match.value.toInt()
-
-                inner@ for (row in max(row - 1, 0)..min(row + 1, input.size - 1)) {
-                    for (col in max(start - 1, 0)..min(end + 1, input[0].length - 1)) {
-                        if (isSymbol(input[row][col])) {
-                            res += num
-                            break@inner
-                        }
-                    }
+    fun part1(input: List<String>): Int = input.indices.sumOf { row ->
+        val (maxRow, maxCol) = Pair(input.size - 1, input[row].length - 1)
+        numRegex.findAll(input[row]).filter { match ->
+            val (start, end) = Pair(match.range.first, match.range.last)
+            (max(row - 1, 0)..min(row + 1, maxRow)).any { row ->
+                (max(start - 1, 0)..min(end + 1, maxCol)).any { col ->
+                    isSymbol(input[row][col])
                 }
             }
-        }
-
-        return res
+        }.map { it.value.toInt() }.sum()
     }
 
-    fun part2(input: List<String>): Int {
-        val numRegex = Regex("\\d+")
-
-        var res = 0
-        for (row in input.indices) {
-            for (col in input[row].indices) {
-                if (input[row][col] != '*') continue
-
-                val adjacentNums = mutableListOf<Pair<Int, Int>>()
-                for (dr in -1..1) {
-                    if (row + dr < 0 || row + dr >= input.size) {
-                        continue
-                    }
-
-                    adjacentNums.addAll(numRegex.findAll(
-                        input[row + dr].subSequence(max(col - 1, 0), min(col + 2, input[row].length))
-                    ).map { Pair(row + dr, max(col - 1, 0) + it.range.first) })
-                }
-
-                if (adjacentNums.size == 2) {
-                    var ratio = 1
-                    for ((row, i) in adjacentNums) {
-                        for (match in numRegex.findAll(input[row])) {
-                            if (i in match.range)
-                                ratio *= match.value.toInt()
-                        }
-                    }
-
-                    res += ratio
-                }
-            }
+    fun part2(input: List<String>): Int = input.indices.sumOf { row ->
+        input[row].indices.filter { col -> input[row][col] == '*' }.map { col ->
+            (max(row - 1, 0)..min(row + 1, input.size)).flatMap { row ->
+                numRegex.findAll(
+                    input[row].subSequence(max(col - 1, 0), min(col + 2, input[row].length))
+                ).map { Pair(row, max(col - 1, 0) + it.range.first) }
+            }.toList()
+        }.filter { it.size == 2 }.sumOf {
+            it.map { (row, i) ->
+                numRegex.findAll(input[row]).first { match -> i in match.range }.value.toInt()
+            }.reduce(Int::times)
         }
-
-        return res
     }
 
     val testInput = readInput("Day03_test")
