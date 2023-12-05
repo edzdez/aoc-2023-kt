@@ -56,14 +56,8 @@ fun main() {
         return if (range.first <= from.first && range.second >= from.second) from
         else if (from.first <= range.first && from.second >= range.second) range
         else if ((from.first <= range.second && range.second <= from.second) || (range.first <= from.second && from.second <= range.second)) Pair(
-            max(range.first, from.first),
-            min(range.second, range.second)
-        )
-        else if ((from.first <= range.first && range.first <= from.second) || (range.first <= from.first && from.first <= range.second)) Pair(
-            max(range.first, from.first),
-            min(range.second, range.second)
-        )
-        else null
+            max(range.first, from.first), min(range.second, range.second)
+        ) else null
     }
 
     fun mapRange(map: MutableMap<Pair<Long, Long>, Long>, range: Pair<Long, Long>): List<Pair<Long, Long>> {
@@ -73,11 +67,8 @@ fun main() {
             val intersection = findIntersection(range, fromRange)
             if (intersection != null) {
                 satisfiedRange.add(intersection)
-
                 val lDiff = intersection.first - fromRange.first
                 val actual = Pair(to + lDiff, to + lDiff + (intersection.second - intersection.first))
-//                println("int: $range, $fromRange = $intersection")
-//                println("act: $actual")
                 actualRange.add(actual)
             }
         }
@@ -87,8 +78,7 @@ fun main() {
         satisfiedRange.sortBy { it.first }
 
         for ((a, b) in satisfiedRange.windowed(2, 1)) {
-            if (a.second + 1 != b.first)
-                actualRange.add(Pair(a.second + 1, b.first - 1))
+            if (a.second + 1 != b.first) actualRange.add(Pair(a.second + 1, b.first - 1))
         }
         return actualRange
     }
@@ -112,7 +102,6 @@ fun main() {
         val parsed = parseInput1(input)
         val initialRanges = parsed.seeds.chunked(2).map { Pair(it[0], it[0] + it[1] - 1L) }.sortedBy { it.first }
         var joinedRanges = joinRanges(initialRanges)
-//        println("ranges: $joinedRanges")
 
         for (map in parsed.maps) {
             val newRanges = mutableListOf<Pair<Long, Long>>()
@@ -121,13 +110,9 @@ fun main() {
                 newRanges.addAll(add)
             }
             newRanges.sortBy { it.first }
-//            println("ranges: $newRanges")
             joinedRanges = joinRanges(newRanges)
-//            joinedRanges = newRanges
         }
 
-        // works for my input, probably doesn't work for anyone else :)
-        // in fact, i tested it. It does not work :)
         return joinedRanges.first().first
     }
 
