@@ -134,6 +134,7 @@ fun main() {
         }
 
         // works for my input, probably doesn't work for anyone else :)
+        // in fact, i tested it. It does not work :)
         return joinedRanges.filter { it.first != 0UL }.minOfOrNull { it.first }!!
     }
 
