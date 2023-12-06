@@ -1,40 +1,45 @@
+import java.lang.IllegalStateException
+
 fun main() {
-    data class Races(val times: List<Int>, val dists: List<Int>)
-
     val numRegex = Regex("\\d+")
+    val spaceRegex = Regex("\\s+")
 
-    fun parseInput(input: List<String>): Races {
-        val times = numRegex.findAll(input[0]).map { it.value.toInt() }.toList()
-        val dists = numRegex.findAll(input[1]).map { it.value.toInt() }.toList()
-        return Races(times, dists)
+    fun findFirst(range: LongProgression, time: Long, dist: Long): Long {
+        for (i in range) {
+            if (i * (time - i) > dist) return i
+        }
+
+        throw IllegalStateException("this should not happen")
     }
 
     fun part1(input: List<String>): Int {
-        val parsed = parseInput(input)
-        var res = 1
-        for (i in parsed.times.indices) {
-            val lens = mutableListOf<Int>()
-            for (j in 0..parsed.times[i]) {
-                val timeLeft = parsed.times[i] - j
-                lens.add(j * timeLeft)
-            }
-            val ways = lens.count { it > parsed.dists[i] }
+        fun parse(a: String) = numRegex.findAll(a).map { it.value.toInt() }.toList()
+        val times = parse(input[0])
+        val dists = parse(input[1])
+
+        var res = 1L
+        for (i in times.indices) {
+            val range = 0..times[i].toLong()
+            val min = findFirst(range, times[i].toLong(), dists[i].toLong())
+            val max = findFirst(range.reversed(), times[i].toLong(), dists[i].toLong())
+
+            val ways = max - min + 1
             res *= ways
         }
 
-        return res
+        return res.toInt()
     }
 
     fun part2(input: List<String>): Int {
-        val time = input[0].substringAfter(": ").trim().split(Regex("\\s+")).joinToString("").toLong()
-        val dist = input[1].substringAfter(": ").trim().split(Regex("\\s+")).joinToString("").toLong()
+        fun parse(s: String) = s.substringAfter(": ").trim().split(spaceRegex).joinToString("").toLong()
+        val time = parse(input[0])
+        val dist = parse(input[1])
 
-        val lens = mutableListOf<Long>()
-        for (j in 0..time) {
-            val timeLeft = time - j
-            lens.add(j * timeLeft)
-        }
-        return lens.count { it > dist }
+        val range = 0..time
+        val min = findFirst(range, time, dist)
+        val max = findFirst(range.reversed(), time, dist)
+
+        return (max - min + 1).toInt()
     }
 
     val testInput = readInput("Day06_test")
