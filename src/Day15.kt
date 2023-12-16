@@ -1,13 +1,9 @@
 fun main() {
-    fun hash(step: String): Int {
-        return step.fold(0) {acc, c ->
-            ((acc + c.code) * 17) % 256
-        }
+    fun hash(step: String): Int = step.fold(0) { acc, c ->
+        ((acc + c.code) * 17) % 256
     }
 
-    fun part1(input: List<String>): Int {
-        return input[0].split(',').sumOf(::hash)
-    }
+    fun part1(input: List<String>): Int = input[0].split(',').sumOf(::hash)
 
     fun part2(input: List<String>): Int {
         val steps = input[0].split(',')
@@ -17,7 +13,7 @@ fun main() {
             if (step.endsWith('-')) {
                 val label = step.substringBefore('-')
                 val box = hash(label)
-                boxes[box].removeIf { it.first == label}
+                boxes[box].removeIf { it.first == label }
             } else {
                 val label = step.substringBefore('=')
                 val box = hash(label)
