@@ -73,13 +73,11 @@ fun main() {
     // assuming clockwise orientation :)
     fun computeSpace(steps: List<Step>): Long {
         var space = 0.0
-        var perim = 0
         for (i in steps.indices) {
             val (dir1, mag1, _) = steps[i]
             val (dir2, _, _) = steps[(i + 1) % steps.size]
             space += (mag1 - 1).toDouble() * 0.5
 
-            perim += mag1
             space += when (dir1) {
                 'U' -> if (dir2 == 'L') 0.75 else 0.25
                 'D' -> if (dir2 == 'R') 0.75 else 0.25
