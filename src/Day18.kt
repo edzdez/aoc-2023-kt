@@ -70,6 +70,7 @@ fun main() {
         return abs(ans)
     }
 
+    // assuming clockwise orientation :)
     fun computeSpace(steps: List<Step>): Long {
         var space = 0.0
         var perim = 0
