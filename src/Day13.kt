@@ -7,10 +7,10 @@ fun main() {
         return 0
     }
 
-    val testInput = readInput("Day15_test")
+    val testInput = readInput("Day13_test")
     check(part1(testInput) == 0)
 
-    val input = readInput("Day15")
+    val input = readInput("Day13")
     part1(input).println()
     part2(input).println()
 }
